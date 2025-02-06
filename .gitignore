@@ -40,3 +40,9 @@ htmlcov/
 .pytest_cache/ 
 
 .cursorrules
+
+.conda
+
+modelscope
+postgresql
+storage
