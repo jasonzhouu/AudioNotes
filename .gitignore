@@ -46,3 +46,6 @@ htmlcov/
 modelscope
 postgresql
 storage
+huggingface
+.files
+.chainlit
