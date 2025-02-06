@@ -3,6 +3,7 @@ import uuid
 from typing import Union, Dict, Any
 from loguru import logger
 import chainlit.data as cl_data
+from chainlit.data.storage_clients.base import BaseStorageClient
 from chainlit.data.sql_alchemy import SQLAlchemyDataLayer
 import psycopg2
 from psycopg2 import sql
@@ -16,7 +17,7 @@ db_host = os.getenv("POSTGRES_HOST", "localhost")
 db_port = os.getenv("POSTGRES_PORT", "5432")
 
 
-class StorageClient(cl_data.BaseStorageClient):
+class StorageClient(BaseStorageClient):
     def __init__(self, bucket: str = ""):
         try:
             self.bucket = bucket
@@ -37,6 +38,41 @@ class StorageClient(cl_data.BaseStorageClient):
         except Exception as e:
             logger.warning(f"StorageClient, upload_file error: {e}")
             return {}
+
+    def delete_file(self, file_path: str) -> bool:
+        """Delete a file from storage
+        
+        Args:
+            file_path: Path to the file to delete
+            
+        Returns:
+            bool: True if deletion was successful, False otherwise
+        """
+        try:
+            full_path = os.path.join(utils.upload_dir(), file_path)
+            if os.path.exists(full_path):
+                os.remove(full_path)
+                return True
+            return False
+        except Exception as e:
+            logger.warning(f"StorageClient, delete_file error: {e}")
+            return False
+
+    def get_read_url(self, file_path: str) -> str:
+        """Get a URL for reading the file
+        
+        Args:
+            file_path: Path to the file
+            
+        Returns:
+            str: URL that can be used to read the file
+        """
+        try:
+            # Since we're using local storage, return a relative URL path
+            return f"/uploads/{file_path}"
+        except Exception as e:
+            logger.warning(f"StorageClient, get_read_url error: {e}")
+            return ""
 
 
 def get_connection_url(driver: str = "asyncpg"):

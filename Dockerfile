@@ -7,12 +7,13 @@ RUN chmod 777 /app
 
 ENV PYTHONPATH="/app"
 
-# Copy only the requirements.txt first to leverage Docker cache
-COPY requirements.txt .
 
 RUN apt-get update && apt-get install -y \
     libgomp1 ffmpeg\
     && rm -rf /var/lib/apt/lists/*
+
+# Copy only the requirements.txt first to leverage Docker cache
+COPY requirements.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt

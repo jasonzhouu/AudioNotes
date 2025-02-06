@@ -17,7 +17,7 @@ class FunASR:
                                  punc_model="ct-punc",
                                  spk_model="cam++",
                                  log_level="error",
-                                 hub=os.getenv("FUNASR_MODEL_HUB", "ms")  # Default to "ms" if not set
+                                 hub=os.getenv("FUNASR_MODEL_HUB", "hf")
                                  )
         logger.debug("funasr :: init model complete")
 

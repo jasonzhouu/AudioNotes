@@ -2,8 +2,9 @@ import os
 import uuid
 import asyncio
 import chainlit as cl
+from chainlit.types import InputAudioChunk
 from io import BytesIO
-from chainlit import ThreadDict
+from chainlit.types import ThreadDict
 from chainlit.element import ElementBased
 from loguru import logger
 from app.services import data_layer
@@ -15,7 +16,15 @@ from app.utils import utils
 # load environment variables
 from dotenv import load_dotenv
 
+# Load environment variables before anything else
 load_dotenv()
+
+# Explicitly set JWT secret for Chainlit
+os.environ["CHAINLIT_AUTH_SECRET"] = os.getenv("JWT_SECRET")
+
+# Bypass SSL Verification (Temporary Fix)
+os.environ["CURL_CA_BUNDLE"] = ""  # Disables SSL verification (not recommended)
+
 
 logger.remove()
 logger.add(f"{utils.storage_dir('logs')}/log.log", rotation="500 MB")
@@ -25,14 +34,17 @@ data_layer.init()
 
 @cl.password_auth_callback
 def password_auth_callback(username: str, password: str):
-    u = os.getenv("USERNAME", "admin")
-    p = os.getenv("PASSWORD", "admin")
+    # Only enable auth if USERNAME and PASSWORD are set in env
+    if not os.getenv("USERNAME") or not os.getenv("PASSWORD"):
+        return cl.User(identifier="default", metadata={"role": "user", "provider": "none"})
+    
+    u = os.getenv("USERNAME")
+    p = os.getenv("PASSWORD")
     if (username, password) == (u, p):
         return cl.User(
             identifier="admin", metadata={"role": "admin", "provider": "credentials"}
         )
-    else:
-        return None
+    return None
 
 
 @cl.on_chat_start
@@ -75,7 +87,7 @@ async def on_chat_start():
 
 
 @cl.on_audio_chunk
-async def on_audio_chunk(chunk: cl.AudioChunk):
+async def on_audio_chunk(chunk: InputAudioChunk):
     if chunk.isStart:
         buffer = BytesIO()
         buffer.name = f"input_audio.{chunk.mimeType.split('/')[1]}"

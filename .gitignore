@@ -49,3 +49,5 @@ storage
 huggingface
 .files
 .chainlit
+
+*.pem
