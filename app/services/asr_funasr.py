@@ -1,5 +1,6 @@
 from funasr import AutoModel
 from loguru import logger
+import os
 
 
 class FunASR:
@@ -16,7 +17,7 @@ class FunASR:
                                  punc_model="ct-punc",
                                  spk_model="cam++",
                                  log_level="error",
-                                 hub="ms"  # hub：表示模型仓库，ms为选择modelscope下载，hf为选择huggingface下载。
+                                 hub=os.getenv("FUNASR_MODEL_HUB", "ms")  # Default to "ms" if not set
                                  )
         logger.debug("funasr :: init model complete")
 
