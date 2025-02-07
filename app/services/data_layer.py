@@ -122,21 +122,22 @@ CREATE TABLE IF NOT EXISTS steps (
     "type" TEXT NOT NULL,
     "threadId" UUID NOT NULL,
     "parentId" UUID,
-    "disableFeedback" BOOLEAN NOT NULL,
-    "streaming" BOOLEAN NOT NULL,
-    "waitForAnswer" BOOLEAN,
-    "isError" BOOLEAN,
-    "metadata" JSONB,
-    "tags" TEXT[],
+    "disableFeedback" BOOLEAN NOT NULL DEFAULT false,
+    "streaming" BOOLEAN NOT NULL DEFAULT false,
+    "waitForAnswer" BOOLEAN DEFAULT false,
+    "isError" BOOLEAN DEFAULT false,
+    "metadata" JSONB DEFAULT '{}'::jsonb,
+    "tags" TEXT[] DEFAULT ARRAY[]::TEXT[],
     "input" TEXT,
     "output" TEXT,
     "createdAt" TEXT,
     "start" TEXT,
     "end" TEXT,
-    "generation" JSONB,
+    "generation" JSONB DEFAULT '{}'::jsonb,
     "showInput" TEXT,
     "language" TEXT,
-    "indent" INT
+    "indent" INT,
+    FOREIGN KEY ("threadId") REFERENCES threads("id") ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS elements (
