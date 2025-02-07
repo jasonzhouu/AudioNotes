@@ -21,11 +21,13 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=audio_notes
       - POSTGRES_HOST=pg
+      - POSTGRES_PORT=5432
       # ollama配置
       - OLLAMA_BASE_URL=http://host.docker.internal:11434/v1
       - OLLAMA_MODEL=qwen2:7b
       - OLLAMA_API_KEY=ollama
       - FUNASR_MODEL_HUB=hf
+      - JWT_SECRET=Lc^98/SjicqTRRZQFROCH_LNZR5J~.mO4GFalXBEr6QNI*0V8TJkj7$Q0,wMzp_A
     depends_on:
       - pg
     extra_hosts:
